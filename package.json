@@ -1,0 +1,35 @@
+{
+  "name": "rechnik",
+  "version": "0.0.1",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VlatkoStojkoski/rechnik.git"
+  },
+  "keywords": [
+    "macedonia",
+    "macedonian",
+    "dictionary",
+    "words",
+    "api"
+  ],
+  "author": "Vlatko Stojkoski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VlatkoStojkoski/rechnik/issues"
+  },
+  "homepage": "https://github.com/VlatkoStojkoski/rechnik#readme",
+  "description": "",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "*",
+    "yargs": "^17.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.37",
+    "@types/yargs": "^16.0.1"
+  }
+}

@@ -39,38 +39,58 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchAbbreviations = exports.searchGeo = exports.searchCorpus = void 0;
-var axios_1 = __importDefault(require("axios"));
-var cheerio_1 = __importDefault(require("cheerio"));
-var utils_1 = require("../utils");
-axios_1.default.defaults.baseURL = 'https://makedonski.gov.mk';
-var commonSearch = function (endpoint, query, page) { return __awaiter(void 0, void 0, void 0, function () {
-    var data, $, results;
+exports.kratenki = exports.geo = exports.korpus = void 0;
+var inquirer_1 = __importDefault(require("inquirer"));
+var api_1 = require("../api");
+var prompt = inquirer_1.default.createPromptModule();
+var korpus = function (args) { return __awaiter(void 0, void 0, void 0, function () {
+    var res, prompt, answers;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, axios_1.default.get("/" + endpoint + "?q=" + encodeURIComponent(query) + "&page=" + page)];
+            case 0: return [4 /*yield*/, api_1.searchCorpus(args.zbor, args.strana)];
             case 1:
-                data = (_a.sent()).data;
-                $ = cheerio_1.default.load(data);
-                results = $('#main-content .row .content')
-                    .toArray()
-                    .map(function (el) { return ({
-                    value: utils_1.cleanString($(el).find('h2').text()),
-                    desc: utils_1.cleanString($(el).find('p').text()),
-                }); });
-                return [2 /*return*/, results];
+                res = _a.sent();
+                prompt = inquirer_1.default.createPromptModule();
+                return [4 /*yield*/, prompt([
+                        {
+                            type: 'rawlist',
+                            name: 'page',
+                            message: 'Кој збор би сакале да го посетите?',
+                            choices: res.map(function (r) { return ({ name: r.value, value: r.desc }); }),
+                        },
+                    ])];
+            case 2:
+                answers = _a.sent();
+                console.log(answers);
+                console.log(res);
+                return [2 /*return*/];
         }
     });
 }); };
-var searchCorpus = function (query, page) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2 /*return*/, commonSearch('s', query, page || 1)];
-}); }); };
-exports.searchCorpus = searchCorpus;
-var searchGeo = function (query, page) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2 /*return*/, commonSearch('geo', query, page || 1)];
-}); }); };
-exports.searchGeo = searchGeo;
-var searchAbbreviations = function (query, page) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2 /*return*/, commonSearch('kratenki', query, page || 1)];
-}); }); };
-exports.searchAbbreviations = searchAbbreviations;
+exports.korpus = korpus;
+var geo = function (args) { return __awaiter(void 0, void 0, void 0, function () {
+    var res;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, api_1.searchGeo(args.zbor, args.strana)];
+            case 1:
+                res = _a.sent();
+                console.log(res);
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.geo = geo;
+var kratenki = function (args) { return __awaiter(void 0, void 0, void 0, function () {
+    var res;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, api_1.searchAbbreviations(args.zbor, args.strana)];
+            case 1:
+                res = _a.sent();
+                console.log(res);
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.kratenki = kratenki;

@@ -45,19 +45,23 @@ var cheerio_1 = __importDefault(require("cheerio"));
 var utils_1 = require("../utils");
 axios_1.default.defaults.baseURL = 'https://makedonski.gov.mk';
 var commonSearch = function (endpoint, query, page) { return __awaiter(void 0, void 0, void 0, function () {
-    var data, $, results;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var data, $, words, pages, results;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0: return [4 /*yield*/, axios_1.default.get("/" + endpoint + "?q=" + encodeURIComponent(query) + "&page=" + page)];
             case 1:
-                data = (_a.sent()).data;
+                data = (_b.sent()).data;
                 $ = cheerio_1.default.load(data);
-                results = $('#main-content .row .content')
+                words = $('#main-content .row .content')
                     .toArray()
                     .map(function (el) { return ({
                     value: utils_1.cleanString($(el).find('h2').text()),
                     desc: utils_1.cleanString($(el).find('p').text()),
                 }); });
+                pages = ((_a = utils_1.cleanString($('#main-content > div > div:nth-child(3) > nav > ul > li.disabled > a').text())
+                    .match(/\d+/g)) === null || _a === void 0 ? void 0 : _a.map(function (p) { return +p; })) || [1, 1];
+                results = { words: words, pages: pages };
                 return [2 /*return*/, results];
         }
     });

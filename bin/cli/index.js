@@ -35,62 +35,86 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.kratenki = exports.geo = exports.korpus = void 0;
+exports.kratenki = exports.geo = exports.korpus = exports.searchCommon = void 0;
 var inquirer_1 = __importDefault(require("inquirer"));
+var chalk_1 = __importDefault(require("chalk"));
 var api_1 = require("../api");
-var prompt = inquirer_1.default.createPromptModule();
-var korpus = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var res, prompt, answers;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, api_1.searchCorpus(args.zbor, args.strana)];
-            case 1:
-                res = _a.sent();
-                prompt = inquirer_1.default.createPromptModule();
-                return [4 /*yield*/, prompt([
+var utils_1 = require("../utils");
+var clear = require('clear');
+var searchCommon = function (args, searchFn, noContent) { return __awaiter(void 0, void 0, void 0, function () {
+    var page, answers, res, choices, isPaginate, _a, word, type, example, content, original;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                page = 1;
+                answers = [];
+                _b.label = 1;
+            case 1: return [4 /*yield*/, searchFn(args.zbor, page)];
+            case 2:
+                res = _b.sent();
+                clear();
+                choices = __spreadArray([], res.words.map(function (r) { return ({
+                    name: chalk_1.default.cyan(r.value) + " " + (r.desc ? chalk_1.default.gray("(" + r.desc + ")") : ''),
+                    value: r.value,
+                }); }));
+                if (page !== 1)
+                    choices = __spreadArray([{ name: 'Претходна страна...', value: 'prev' }], choices);
+                if (page !== res.pages[1])
+                    choices = __spreadArray(__spreadArray([], choices), [{ name: 'Следна страна...', value: 'next' }]);
+                return [4 /*yield*/, inquirer_1.default.prompt([
                         {
                             type: 'rawlist',
                             name: 'page',
                             message: 'Кој збор би сакале да го посетите?',
-                            choices: res.map(function (r) { return ({ name: r.value, value: r.desc }); }),
+                            choices: choices,
                         },
                     ])];
-            case 2:
-                answers = _a.sent();
-                console.log(answers);
-                console.log(res);
+            case 3:
+                answers = _b.sent();
+                isPaginate = ['prev', 'next'].includes(answers.page);
+                if (noContent && !isPaginate) {
+                    console.error(chalk_1.default.red('Изворот кој го побаравте не содржи дефиниција'));
+                    process.exit(1);
+                }
+                if (isPaginate)
+                    page += answers.page === 'prev' ? -1 : 1;
+                _b.label = 4;
+            case 4:
+                if (!answers.length && ['prev', 'next'].includes(answers.page)) return [3 /*break*/, 1];
+                _b.label = 5;
+            case 5:
+                clear();
+                return [4 /*yield*/, api_1.getPage(answers.page)];
+            case 6:
+                _a = _b.sent(), word = _a.word, type = _a.type, example = _a.example, content = _a.content, original = _a.original;
+                console.log(chalk_1.default.bold(utils_1.cammilify(word)) + "\n" +
+                    ("\u0412\u0438\u0434: " + chalk_1.default.green(type) + "\n") +
+                    ("\u041F\u0440\u0438\u043C\u0435\u0440: " + (example ? chalk_1.default.yellow(example) : chalk_1.default.gray('Нема')) + "\n\n") +
+                    (chalk_1.default.blueBright(content) + "\n\n") +
+                    chalk_1.default.gray("\u041E\u0440\u0438\u0433\u0438\u043D\u0430\u043B\u043D\u0438 \u043F\u043E\u0434\u0430\u0442\u043E\u0446\u0438:\n" + original));
                 return [2 /*return*/];
         }
     });
 }); };
+exports.searchCommon = searchCommon;
+var korpus = function (args) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2 /*return*/, exports.searchCommon(args, api_1.searchCorpus)];
+}); }); };
 exports.korpus = korpus;
-var geo = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var res;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, api_1.searchGeo(args.zbor, args.strana)];
-            case 1:
-                res = _a.sent();
-                console.log(res);
-                return [2 /*return*/];
-        }
-    });
-}); };
+var geo = function (args) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2 /*return*/, exports.searchCommon(args, api_1.searchGeo)];
+}); }); };
 exports.geo = geo;
-var kratenki = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var res;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, api_1.searchAbbreviations(args.zbor, args.strana)];
-            case 1:
-                res = _a.sent();
-                console.log(res);
-                return [2 /*return*/];
-        }
-    });
-}); };
+var kratenki = function (args) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2 /*return*/, exports.searchCommon(args, api_1.searchAbbreviations, true)];
+}); }); };
 exports.kratenki = kratenki;

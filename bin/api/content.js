@@ -55,11 +55,14 @@ var getPage = function (word) { return __awaiter(void 0, void 0, void 0, functio
                 result = {
                     word: word,
                     type: utils_1.cleanString($($('#main-content .content p')[0]).text()),
-                    desc: utils_1.cleanString($($('#main-content .content p')[1]).text()),
-                    content: utils_1.cleanString($('#main-content .content .content ').text()),
+                    example: utils_1.cleanString($($('#main-content .content p')[1]).text()),
+                    content: $('#main-content .content .content ')
+                        .text()
+                        .replace(/ +/g, ' ')
+                        .replace(/(( +)?\n( +)?)+/g, '\n')
+                        .trim(),
                     original: utils_1.cleanString($('#main-content .content div.col-12.col-md-4 > div > p').text()),
                 };
-                console.log(result);
                 return [2 /*return*/, result];
         }
     });

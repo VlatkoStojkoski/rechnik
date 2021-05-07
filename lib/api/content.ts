@@ -7,7 +7,7 @@ axios.defaults.baseURL = 'https://makedonski.gov.mk';
 export interface DefinitionPage {
 	word: string;
 	type: string;
-	desc: string;
+	example: string;
 	content: string;
 	original: string;
 }
@@ -20,14 +20,16 @@ export const getPage = async (word: string): Promise<DefinitionPage> => {
 	const result = {
 		word,
 		type: cleanString($($('#main-content .content p')[0]).text()),
-		desc: cleanString($($('#main-content .content p')[1]).text()),
-		content: cleanString($('#main-content .content .content ').text()),
+		example: cleanString($($('#main-content .content p')[1]).text()),
+		content: $('#main-content .content .content ')
+			.text()
+			.replace(/ +/g, ' ')
+			.replace(/(( +)?\n( +)?)+/g, '\n')
+			.trim(),
 		original: cleanString(
 			$('#main-content .content div.col-12.col-md-4 > div > p').text()
 		),
 	};
-
-	console.log(result);
 
 	return result;
 };
